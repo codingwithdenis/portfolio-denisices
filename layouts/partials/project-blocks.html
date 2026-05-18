@@ -1,0 +1,38 @@
+{{ range .blocks }}
+  {{ if eq .type "text" }}
+    <div class="content-block">
+      <div class="content-text" style="grid-column:1/-1"><p>{{ .body | markdownify }}</p></div>
+    </div>
+
+  {{ else if eq .type "image" }}
+    <div class="content-block"
+      {{- if not .body }} style="grid-template-columns:1fr"{{ end -}}>
+      {{ if .src }}
+        <div class="content-image"><img src="{{ .src }}" alt="{{ with .label }}{{ . }}{{ end }}" loading="lazy"></div>
+      {{ else }}
+        <div class="content-image"><span class="content-image-label">{{ with .label }}{{ . }}{{ else }}{{ $.initials }}{{ end }}</span></div>
+      {{ end }}
+      {{ with .body }}
+        <div class="content-text"><p>{{ . | markdownify }}</p></div>
+      {{ end }}
+    </div>
+
+  {{ else if eq .type "text-image" }}
+    <div class="content-block{{ if .flip }} flip{{ end }}">
+      <div class="content-image">
+        {{ if .image }}<img src="{{ .image }}" alt="" loading="lazy">{{ else }}<span class="content-image-label">{{ with .label }}{{ . }}{{ else }}{{ $.initials }}{{ end }}</span>{{ end }}
+      </div>
+      <div class="content-text"><p>{{ .body | markdownify }}</p></div>
+    </div>
+
+  {{ else if eq .type "video" }}
+    <div class="content-block" style="grid-template-columns:1fr">
+      <div class="content-video">
+        <iframe src="{{ .src }}" allowfullscreen loading="lazy"></iframe>
+      </div>
+      {{ with .body }}
+        <div class="content-text"><p>{{ . | markdownify }}</p></div>
+      {{ end }}
+    </div>
+  {{ end }}
+{{ end }}

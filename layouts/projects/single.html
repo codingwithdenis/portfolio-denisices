@@ -1,0 +1,40 @@
+{{ define "main" }}
+<div class="project-back">
+  <a href='{{ if .Params.category }}/?filter={{ .Params.category }}{{ else }}/{{ end }}'>← Back to projects</a>
+</div>
+
+<div class="project-hero">
+  {{ if .Params.thumb }}
+  <img src="{{ .Params.thumb }}" alt="{{ .Title }}" loading="lazy">
+  {{ else }}
+  <div class="project-hero-label">{{ .Params.initials }}</div>
+  {{ end }}
+</div>
+
+<div class="project-body">
+  <div class="project-category">{{ .Params.categoryLabel }}</div>
+  <h1 class="project-title-lg">{{ .Title }}</h1>
+  <div class="project-description">{{ .Params.description | markdownify }}</div>
+
+  {{ with .Params.blocks }}
+  <div class="project-content">
+    {{ partial "project-blocks" (dict "blocks" . "initials" $.Params.initials) }}
+  </div>
+  {{ end }}
+
+  <div class="project-specs">
+    <div>
+      <div class="project-spec-label">Year</div>
+      <div class="project-spec-value">{{ .Params.year }}</div>
+    </div>
+    <div>
+      <div class="project-spec-label">Category</div>
+      <div class="project-spec-value">{{ .Params.categoryLabel }}</div>
+    </div>
+    <div>
+      <div class="project-spec-label">Role</div>
+      <div class="project-spec-value">Director, Designer</div>
+    </div>
+  </div>
+</div>
+{{ end }}

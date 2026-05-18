@@ -1,0 +1,66 @@
+{{ define "main" }}
+<section class="hero">
+  <div class="hero-eyebrow">Selected work</div>
+</section>
+
+<main class="projects" id="project-grid">
+{{ range where .Site.RegularPages "Section" "projects" }}
+  <div class="project-card" data-category="{{ .Params.category }}" data-modal="modal-{{ .File.ContentBaseName }}">
+    <div class="project-thumb">
+      {{ if .Params.thumb }}
+      <img src="{{ .Params.thumb }}" alt="{{ .Title }}" loading="lazy">
+      {{ else }}
+      <div class="project-thumb-inner">{{ .Params.initials }}</div>
+      {{ end }}
+    </div>
+    <div class="project-meta">
+      <span class="project-title">{{ .Title }}</span>
+      <span class="project-tag">{{ .Params.year }}</span>
+    </div>
+  </div>
+{{ end }}
+</main>
+
+{{ range $p := where .Site.RegularPages "Section" "projects" }}
+<div class="modal-overlay" id="modal-{{ $p.File.ContentBaseName }}">
+  <div class="modal">
+    <button class="modal-close" data-modal="modal-{{ $p.File.ContentBaseName }}">✕</button>
+    <div class="modal-hero">
+      {{ if $p.Params.thumb }}
+      <img src="{{ $p.Params.thumb }}" alt="{{ $p.Title }}" loading="lazy">
+      {{ else }}
+      <div class="modal-hero-label">{{ $p.Params.initials }}</div>
+      {{ end }}
+    </div>
+    <div class="modal-body">
+      <div class="modal-category">{{ $p.Params.categoryLabel }}</div>
+      <h2 class="modal-title">{{ $p.Title }}</h2>
+      <p class="modal-description">{{ $p.Params.description | markdownify }}</p>
+      {{ with $p.Params.blocks }}
+      <div class="modal-content">
+        {{ partial "project-blocks" (dict "blocks" . "initials" $p.Params.initials) }}
+      </div>
+      {{ end }}
+      <div class="modal-specs">
+        <div>
+          <div class="modal-spec-label">Year</div>
+          <div class="modal-spec-value">{{ $p.Params.year }}</div>
+        </div>
+        <div>
+          <div class="modal-spec-label">Category</div>
+          <div class="modal-spec-value">{{ $p.Params.categoryLabel }}</div>
+        </div>
+        <div>
+          <div class="modal-spec-label">Role</div>
+          <div class="modal-spec-value">Director, Designer</div>
+        </div>
+      </div>
+      <a href="{{ $p.RelPermalink }}" class="modal-full-link">Open full page →</a>
+    </div>
+  </div>
+</div>
+{{ end }}
+{{ end }}
+{{ define "scripts" }}
+<script src="/js/main.js"></script>
+{{ end }}

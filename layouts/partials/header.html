@@ -1,0 +1,17 @@
+<header>
+  <div class="header-inner">
+    <div>
+      <a href="/" style="text-decoration:none;color:inherit">
+        <div class="header-name">Denis<span class="dot">.</span></div>
+      </a>
+      <div class="header-role">{{ .Site.Params.role }}</div>
+    </div>
+    <nav class="header-nav">
+      <a href="/" data-filter="all"{{ if .IsHome }} class="active"{{ end }}>All</a>
+      <a href="/?filter=motion" data-filter="motion">Motion</a>
+      <a href="/?filter=code" data-filter="code">Code</a>
+      <a href="/?filter=video" data-filter="video">Video</a>
+      <a href="/info/" data-filter="info"{{ if eq .RelPermalink "/info/" }} class="active"{{ end }}>Info</a>
+    </nav>
+  </div>
+</header>

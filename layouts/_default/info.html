@@ -1,0 +1,49 @@
+{{ define "main" }}
+<section class="hero">
+  <div class="hero-eyebrow">About</div>
+  <div class="hero-title">Info</div>
+</section>
+
+<div class="info-page">
+  <a href="/" class="back-link">← Back to projects</a>
+
+  <div class="info-grid">
+    <div class="info-photo">
+      <svg viewBox="0 0 300 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="300" height="400" fill="oklch(16% 0.012 100)"/>
+        <circle cx="150" cy="140" r="48" fill="oklch(24% 0.015 90)"/>
+        <ellipse cx="150" cy="320" rx="72" ry="88" fill="oklch(24% 0.015 90)"/>
+      </svg>
+    </div>
+
+    <div class="info-details">
+      <div class="info-eyebrow">{{ .Site.Params.role }}</div>
+      <div class="info-name">{{ .Site.Params.name }}</div>
+
+      <div class="info-bio">
+        {{ .Content }}
+      </div>
+
+      <div class="info-contact">
+        <div class="info-contact-item">
+          <span class="icon">@</span>
+          <a href="mailto:{{ .Site.Params.email }}">{{ .Site.Params.email }}</a>
+        </div>
+        <div class="info-contact-item">
+          <span class="icon">ig</span>
+          <a href="{{ .Site.Params.instagram }}" target="_blank" rel="noopener">@{{ index (split (strings.TrimPrefix "https://instagram.com/" .Site.Params.instagram) "/") 0 }}</a>
+        </div>
+        <div class="info-contact-item">
+          <span class="icon">in</span>
+          <a href="{{ .Site.Params.linkedin }}" target="_blank" rel="noopener">{{ trim (strings.TrimPrefix "https://linkedin.com/in/" .Site.Params.linkedin) "/" }}</a>
+        </div>
+      </div>
+
+      <div class="info-social">
+        <a href="{{ .Site.Params.instagram }}" target="_blank" rel="noopener">Instagram</a>
+        <a href="{{ .Site.Params.linkedin }}" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }}

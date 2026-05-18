@@ -1,0 +1,40 @@
+baseURL = "https://denisices.com.br"
+languageCode = "en"
+title = "Denis — Creative Technologist"
+disableHugoGeneratorInject = true
+enableInlineShortcodes = true
+disableKinds = ["taxonomy", "term"]
+
+[params]
+  name = "Denis"
+  role = "Creative Technologist"
+  email = "denisices@outlook.com"
+  instagram = "https://instagram.com/denisices"
+  linkedin = "https://linkedin.com/in/denis-n-santos"
+
+[menu]
+  [[menu.main]]
+    identifier = "all"
+    name = "All"
+    url = "/"
+    weight = 1
+  [[menu.main]]
+    identifier = "motion"
+    name = "Motion"
+    url = "/?filter=motion"
+    weight = 2
+  [[menu.main]]
+    identifier = "code"
+    name = "Code"
+    url = "/?filter=code"
+    weight = 3
+  [[menu.main]]
+    identifier = "video"
+    name = "Video"
+    url = "/?filter=video"
+    weight = 4
+  [[menu.main]]
+    identifier = "info"
+    name = "Info"
+    url = "/info/"
+    weight = 5
