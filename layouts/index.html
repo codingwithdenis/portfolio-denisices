@@ -4,7 +4,7 @@
 </section>
 
 <main class="projects" id="project-grid">
-{{ range where .Site.RegularPages "Section" "projects" }}
+{{ range where (where .Site.RegularPages "Section" "projects") "Params.hidden" "!=" true }}
   <div class="project-card" data-category="{{ .Params.category }}" data-modal="modal-{{ .File.ContentBaseName }}">
     <div class="project-thumb">
       {{ if .Params.thumb }}
@@ -21,7 +21,7 @@
 {{ end }}
 </main>
 
-{{ range $p := where .Site.RegularPages "Section" "projects" }}
+{{ range $p := where (where .Site.RegularPages "Section" "projects") "Params.hidden" "!=" true }}
 <div class="modal-overlay" id="modal-{{ $p.File.ContentBaseName }}">
   <div class="modal">
     <button class="modal-close" data-modal="modal-{{ $p.File.ContentBaseName }}">✕</button>

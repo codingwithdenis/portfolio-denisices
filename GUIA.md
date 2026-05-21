@@ -36,6 +36,7 @@ year: "2026"                             # Ano de publicação
 thumb: ""                                # URL da imagem (deixe "" pra usar initials)
 url: ""                                  # Link opcional pro projeto ao vivo
 weight: 1                                # Menor número = aparece primeiro na lista
+hidden: false                            # true = oculta do grid sem apagar o arquivo
 description: |                           # Texto introdutório do projeto
   Aqui vai a descrição em **markdown**.
   Pode usar **negrito**, *itálico*, etc.
@@ -107,6 +108,16 @@ Embed YouTube ou Vimeo em 16:9. O `body` é opcional (legenda).
 O deploy é automático — em ~30 segundos o site atualiza.
 
 ---
+
+## 🙈 Como ocultar um projeto (sem apagar)
+
+Adicione `hidden: true` no frontmatter do projeto:
+```yaml
+hidden: true
+```
+
+O projeto não aparece no grid da home, mas o arquivo permanece.  
+Para mostrar de novo, troque para `hidden: false` ou remova a linha.
 
 ## 🗑️ Como remover um projeto
 
