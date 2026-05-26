@@ -34,5 +34,35 @@
         <div class="content-text"><p>{{ . | markdownify }}</p></div>
       {{ end }}
     </div>
+
+  {{ else if eq .type "compare" }}
+    <div class="content-block compare-block">
+      <div class="compare-wrapper">
+        <div class="compare-before">
+          {{ if .before }}
+            <img src="{{ .before }}" alt="Before" loading="lazy">
+          {{ else }}
+            <div class="compare-placeholder">{{ with .beforeLabel }}{{ . }}{{ else }}Before{{ end }}</div>
+          {{ end }}
+        </div>
+        <div class="compare-after">
+          {{ if .after }}
+            <img src="{{ .after }}" alt="After" loading="lazy">
+          {{ else }}
+            <div class="compare-placeholder" style="background:var(--surface)">{{ with .afterLabel }}{{ . }}{{ else }}After{{ end }}</div>
+          {{ end }}
+        </div>
+        <div class="compare-handle"><div class="compare-handle-knob">⟷</div></div>
+        {{ if or .beforeLabel .afterLabel }}
+          <div class="compare-labels">
+            {{ with .beforeLabel }}<span class="compare-label compare-label-left">{{ . }}</span>{{ end }}
+            {{ with .afterLabel }}<span class="compare-label compare-label-right">{{ . }}</span>{{ end }}
+          </div>
+        {{ end }}
+      </div>
+      {{ with .body }}
+        <div class="content-text" style="grid-column:1/-1"><p>{{ . | markdownify }}</p></div>
+      {{ end }}
+    </div>
   {{ end }}
 {{ end }}

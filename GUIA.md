@@ -30,7 +30,7 @@ Cada arquivo .md dentro de `content/projects/` vira um card no grid e uma págin
 ---
 title: "Meu Projeto"                    # Nome que aparece no card e na página
 initials: "MP"                           # Placeholder quando não tem imagem
-category: "motion"                       # motion | code | video
+category: "motion"                       # motion | code | video | ia | design
 categoryLabel: "Motion Design"           # Rótulo visível
 year: "2026"                             # Ano de publicação
 thumb: ""                                # URL da imagem (deixe "" pra usar initials)
@@ -63,6 +63,14 @@ blocks:                                  # Blocos de conteúdo da página do pro
     src: "https://youtube.com/embed/..."  # Link do embed YouTube ou Vimeo
     body: |                              # Legenda opcional abaixo do vídeo
       Descrição do vídeo.
+
+  - type: compare                         # ── COMPARADOR ANTES/DEPOIS ──
+    before: ""                            # URL da imagem "antes"
+    beforeLabel: "Raw output"             # Rótulo opcional canto inferior esq.
+    after: ""                             # URL da imagem "depois"
+    afterLabel: "Curated result"          # Rótulo opcional canto inferior dir.
+    body: |                               # Legenda opcional abaixo do slider
+      Texto opcional abaixo do comparador.
 ---
 ```
 
@@ -87,6 +95,14 @@ Duas colunas: imagem de um lado, texto do outro.
 
 ### `video` — Vídeo embed
 Embed YouTube ou Vimeo em 16:9. O `body` é opcional (legenda).
+
+### `compare` — Comparador antes/depois
+Slider interativo para comparar duas imagens. Arraste a barra ou clique em qualquer ponto para revelar a imagem "depois" sobre a "antes".
+- `before` — URL da imagem original
+- `beforeLabel` — Texto opcional no canto inferior esquerdo (ex: "Raw output")
+- `after` — URL da imagem modificada
+- `afterLabel` — Texto opcional no canto inferior direito (ex: "Curated result")
+- `body` — Legenda opcional abaixo do slider
 
 ---
 

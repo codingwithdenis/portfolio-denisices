@@ -7,11 +7,15 @@
       <div class="header-role">{{ .Site.Params.role }}</div>
     </div>
     <nav class="header-nav">
-      <a href="/" data-filter="all"{{ if .IsHome }} class="active"{{ end }}>All</a>
-      <a href="/?filter=motion" data-filter="motion">Motion</a>
-      <a href="/?filter=code" data-filter="code">Code</a>
-      <a href="/?filter=video" data-filter="video">Video</a>
-      <a href="/info/" data-filter="info"{{ if eq .RelPermalink "/info/" }} class="active"{{ end }}>Info</a>
+      {{ range .Site.Menus.main }}
+        {{ if eq .Identifier "all" }}
+          <a href="{{ .URL }}" data-filter="all"{{ if $.IsHome }} class="active"{{ end }}>{{ .Name }}</a>
+        {{ else if eq .Identifier "info" }}
+          <a href="{{ .URL }}" data-filter="info"{{ if eq $.RelPermalink "/info/" }} class="active"{{ end }}>{{ .Name }}</a>
+        {{ else }}
+          <a href="{{ .URL }}" data-filter="{{ .Identifier }}">{{ .Name }}</a>
+        {{ end }}
+      {{ end }}
     </nav>
   </div>
 </header>
