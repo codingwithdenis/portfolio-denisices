@@ -9,11 +9,11 @@
     <nav class="header-nav">
       {{ range .Site.Menus.main }}
         {{ if eq .Identifier "all" }}
-          <a href="{{ .URL }}" data-filter="all"{{ if $.IsHome }} class="active"{{ end }}>{{ .Name }}</a>
+          <a href="/" data-filter="all"{{ if $.IsHome }} class="active"{{ end }}>{{ .Name }}</a>
         {{ else if eq .Identifier "info" }}
-          <a href="{{ .URL }}" data-filter="info"{{ if eq $.RelPermalink "/info/" }} class="active"{{ end }}>{{ .Name }}</a>
+          <a href="/info/" data-filter="info"{{ if eq $.RelPermalink "/info/" }} class="active"{{ end }}>{{ .Name }}</a>
         {{ else }}
-          <a href="{{ .URL }}" data-filter="{{ .Identifier }}">{{ .Name }}</a>
+          <a href="/?filter={{ .Identifier }}" data-filter="{{ .Identifier }}">{{ .Name }}</a>
         {{ end }}
       {{ end }}
     </nav>

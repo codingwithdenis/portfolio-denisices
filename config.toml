@@ -21,22 +21,22 @@ disableKinds = ["taxonomy", "term"]
   [[menu.main]]
     identifier = "design"
     name = "Design"
-    url = "/?filter=design"
+    url = "/"
     weight = 2
   [[menu.main]]
     identifier = "motion"
     name = "Motion"
-    url = "/?filter=motion"
+    url = "/"
     weight = 3
   [[menu.main]]
     identifier = "video"
     name = "Video"
-    url = "/?filter=video"
+    url = "/"
     weight = 4
   [[menu.main]]
     identifier = "code"
     name = "Code"
-    url = "/?filter=code"
+    url = "/"
     weight = 5
   [[menu.main]]
     identifier = "info"
