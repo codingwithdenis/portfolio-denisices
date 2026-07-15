@@ -11,7 +11,7 @@
         {{ if eq .Identifier "all" }}
           <a href="/" data-filter="all"{{ if $.IsHome }} class="active"{{ end }}>{{ .Name }}</a>
         {{ else if eq .Identifier "info" }}
-          <a href="/info/" data-filter="info"{{ if eq $.RelPermalink "/info/" }} class="active"{{ end }}>{{ .Name }}</a>
+          <a href="/info/"{{ if eq $.RelPermalink "/info/" }} class="active"{{ end }}>{{ .Name }}</a>
         {{ else }}
           <a href="/?filter={{ .Identifier }}" data-filter="{{ .Identifier }}">{{ .Name }}</a>
         {{ end }}
