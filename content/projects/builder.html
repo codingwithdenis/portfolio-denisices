@@ -1,0 +1,554 @@
+---
+_build:
+  list: false
+  render: false
+  publishResources: false
+---
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Builder — Projetos</title>
+<style>
+:root{--bg:#0f0f0f;--surface:#1a1a1a;--border:#2a2a2a;--fg:#d4d4d4;--fg2:#888;--accent:#4a9eff;--accent2:#6fb4ff;--radius:8px;--font:system-ui,-apple-system,sans-serif;--sidebar-w:220px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font:14px/1.5 var(--font)}
+.layout{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.sidebar-header{padding:14px;border-bottom:1px solid var(--border)}
+.sidebar-header h1{font-size:14px;font-weight:700}
+.sidebar-header p{font-size:11px;color:var(--fg2);margin-top:2px}
+.sidebar-list{flex:1;overflow-y:auto;padding:6px}
+.sidebar-item{display:block;width:100%;text-align:left;background:none;border:none;color:var(--fg);padding:7px 10px;border-radius:4px;cursor:pointer;font:13px var(--font);transition:background .1s;margin-bottom:1px}
+.sidebar-item:hover{background:var(--border)}
+.sidebar-item .s-title{display:block;font-weight:500;font-size:12px}
+.sidebar-item .s-file{display:block;font-size:10px;color:var(--fg2);margin-top:1px}
+.sidebar-item.active{background:var(--accent);color:#fff}
+.sidebar-item.active .s-file{color:rgba(255,255,255,.6)}
+.sidebar-footer{padding:10px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:4px}
+.sidebar-footer .btn{width:100%;justify-content:center}
+.main{flex:1;overflow-y:auto;padding:24px}
+h2{font-size:15px;font-weight:600;margin-bottom:8px;color:var(--accent)}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px}
+label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--fg2);margin-bottom:4px;margin-top:10px}
+label:first-child{margin-top:0}
+input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--fg);padding:8px 10px;font:13px var(--font);outline:none;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+textarea{resize:vertical;min-height:60px;font-family:monospace}
+.fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.row{display:flex;gap:24px;align-items:flex-start}
+.col{flex:1;min-width:0}
+.btn{background:var(--border);border:none;border-radius:4px;color:var(--fg);padding:6px 14px;font:13px var(--font);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .15s;font-family:var(--font)}
+.btn:hover{background:#3a3a3a}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent2)}
+.btn-sm{padding:4px 10px;font-size:12px}
+.btn-danger{color:#ff6b6b}
+.btn-danger:hover{background:#3a1a1a}
+.btn-success{background:#2a6b2a;color:#fff}
+.btn-success:hover{background:#3a8a3a}
+.block-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:8px}
+.block-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.block-type-badge{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);font-weight:600}
+.block-actions{display:flex;gap:4px}
+.block-body{display:grid;gap:8px}
+.empty-state{padding:32px 16px;text-align:center;color:var(--fg2);font-size:13px}
+.output-wrap{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-top:8px}
+.output-wrap pre{font-family:monospace;font-size:12px;line-height:1.4;white-space:pre-wrap;word-break:break-word;max-height:250px;overflow-y:auto;color:var(--fg)}
+.output-actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.alert-wrap{margin-top:8px}
+.alert{background:#1a2a1a;border:1px solid #2a4a2a;border-radius:var(--radius);padding:8px 12px;font-size:13px}
+@media(width<900px){.layout{flex-direction:column;height:auto}.sidebar{width:100%;border-right:none;border-bottom:1px solid var(--border);max-height:180px}.main{padding:16px}}
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h1>🧱 Projetos</h1>
+    <p id="sidebar-status">Clique abaixo para abrir a pasta</p>
+  </div>
+  <div class="sidebar-list" id="sidebar-list">
+    <div class="empty-state" style="padding:16px 8px;font-size:12px">
+      Nenhuma pasta aberta.
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <button class="btn btn-sm btn-primary" onclick="openProjectFolder()">📂 Abrir pasta</button>
+    <button class="btn btn-sm" onclick="showSaveDialog()">➕ Novo projeto</button>
+    <button class="btn btn-sm btn-success" onclick="saveCurrentFile()">💾 Salvar</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="row">
+    <div class="col" style="max-width:440px">
+      <div class="panel">
+        <h2>Metadados</h2>
+        <div class="fields-grid">
+          <div><label>Título</label><input id="f-title" placeholder="Nome do Projeto"></div>
+          <div><label>Iniciais</label><input id="f-initials" placeholder="NP" maxlength="4" style="text-transform:uppercase"></div>
+          <div><label>Categoria</label><select id="f-category" onchange="syncCategoryLabel()">
+            <option value="code">code</option>
+            <option value="motion">motion</option>
+            <option value="video">video</option>
+            <option value="design">design</option>
+            <option value="ia">ia</option>
+          </select></div>
+          <div><label>Label</label><input id="f-categoryLabel" placeholder="Creative Coding"></div>
+          <div><label>Peso</label><input id="f-weight" type="number" placeholder="10"></div>
+          <div></div>
+        </div>
+        <label>Thumb URL</label><input id="f-thumb" placeholder="/images/nome-thumb.jpg">
+        <label>URL externa</label><input id="f-url" placeholder="(vazio se não tiver)">
+        <label>Role</label><input id="f-role" placeholder="Director, Designer">
+        <label>Descrição</label><textarea id="f-desc" rows="2" placeholder="Resumo curto para a grid..."></textarea>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <h2 style="margin:0">Blocos</h2>
+          <div style="display:flex;gap:4px;flex-wrap:wrap">
+            <button class="btn btn-sm" onclick="addBlock('text')">+ Texto</button>
+            <button class="btn btn-sm" onclick="addBlock('image')">+ Imagem</button>
+            <button class="btn btn-sm" onclick="addBlock('text-image')">+ Text-Img</button>
+            <button class="btn btn-sm" onclick="addBlock('video')">+ Vídeo</button>
+            <button class="btn btn-sm" onclick="addBlock('video-local')">+ Vídeo Local</button>
+            <button class="btn btn-sm" onclick="addBlock('compare')">+ Comparar</button>
+            <button class="btn btn-sm" onclick="addBlock('carousel')">+ Carrossel</button>
+          </div>
+        </div>
+        <div id="blocks-container"><div class="empty-state">Nenhum bloco ainda.</div></div>
+      </div>
+
+      <div class="panel">
+        <h2>Saída</h2>
+        <div class="output-wrap"><pre id="output">...</pre></div>
+        <div class="output-actions">
+          <button class="btn btn-sm" onclick="copyOutput()">📋 Copiar</button>
+        </div>
+        <div class="alert-wrap" id="alert-area"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+let blocks = []
+let dirHandle = null         // FileSystemDirectoryHandle
+let currentFileHandle = null // FileSystemFileHandle — arquivo atualmente aberto
+let currentFileName = ''     // nome do arquivo atualmente aberto
+let fileEntries = []         // {name, handle}
+
+const catLabels = {code:'Creative Coding', motion:'Motion Design', video:'Videomaking', design:'Design', ia:'IA'}
+
+function syncCategoryLabel(){
+  const c = document.getElementById('f-category').value
+  const l = document.getElementById('f-categoryLabel')
+  if(!l.dataset.touched) l.value = catLabels[c] || ''
+}
+document.getElementById('f-categoryLabel').addEventListener('input', function(){ this.dataset.touched='1' })
+
+// ═══════════════════════════════════════════════════════════════
+// FIELD DEFINITIONS PER BLOCK TYPE
+// ═══════════════════════════════════════════════════════════════
+const typeFields = {
+  text:         [{key:'body', label:'Texto', type:'textarea', rows:3}],
+  image:        [{key:'src', label:'URL da imagem'},{key:'label', label:'Label'},{key:'captionPos', label:'captionPos', type:'select', opts:[{v:'',l:'— padrão (lado a lado)'},{v:'bottom',l:'bottom (abaixo)'},{v:'top',l:'top (acima)'}]},{key:'body', label:'Legenda', type:'textarea', rows:2}],
+  'text-image': [{key:'image', label:'URL da imagem'},{key:'label', label:'Label'},{key:'body', label:'Texto', type:'textarea', rows:2},{key:'flip', label:'Flip', type:'select', opts:[{v:'false',l:'false (imagem esquerda)'},{v:'true',l:'true (imagem direita)'}]}],
+  video:        [{key:'src', label:'Embed URL', placeholder:'https://youtube.com/embed/...'},{key:'captionPos', label:'captionPos', type:'select', opts:[{v:'',l:'— padrão (abaixo)'},{v:'top',l:'top (acima)'}]},{key:'body', label:'Legenda', type:'textarea', rows:2}],
+  'video-local':[{key:'src', label:'URL do .mp4'},{key:'poster', label:'Poster'},{key:'captionPos', label:'captionPos', type:'select', opts:[{v:'',l:'— padrão (abaixo)'},{v:'top',l:'top (acima)'}]},{key:'body', label:'Legenda', type:'textarea', rows:2}],
+  compare:      [{key:'before', label:'URL "antes"'},{key:'beforeLabel', label:'Label "antes"'},{key:'after', label:'URL "depois"'},{key:'afterLabel', label:'Label "depois"'},{key:'body', label:'Legenda', type:'textarea', rows:2}],
+  carousel:     [{key:'images', label:'URLs das imagens (uma por linha)', type:'textarea', rows:4, placeholder:'https://...'},{key:'body', label:'Legenda', type:'textarea', rows:2}],
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DIRECTORY & FILE OPERATIONS
+// ═══════════════════════════════════════════════════════════════
+async function openProjectFolder(){
+  try{
+    dirHandle = await window.showDirectoryPicker({mode:'readwrite'})
+    await scanDirectory()
+  }catch(e){
+    if(e.name !== 'AbortError') alert('Erro ao abrir pasta: ' + e.message)
+  }
+}
+
+async function scanDirectory(){
+  fileEntries = []
+  for await (const entry of dirHandle.values()){
+    if(entry.kind === 'file' && entry.name.endsWith('.md')){
+      fileEntries.push({name: entry.name, handle: entry})
+    }
+  }
+  fileEntries.sort((a,b) => a.name.localeCompare(b.name))
+  renderSidebar()
+  document.getElementById('sidebar-status').textContent = `${fileEntries.length} projeto(s)`
+}
+
+function renderSidebar(){
+  const c = document.getElementById('sidebar-list')
+  if(!fileEntries.length){
+    c.innerHTML = '<div class="empty-state" style="padding:16px 8px;font-size:12px">Nenhum .md encontrado.</div>'
+    return
+  }
+  c.innerHTML = fileEntries.map(e =>
+    `<button class="sidebar-item${e.name === currentFileName ? ' active' : ''}" onclick="loadFile('${escHtml(e.name)}')">
+      <span class="s-title">${escHtml(e.name.replace(/\.md$/,''))}</span>
+      <span class="s-file">${escHtml(e.name)}</span>
+    </button>`
+  ).join('')
+}
+
+async function loadFile(name){
+  const entry = fileEntries.find(e => e.name === name)
+  if(!entry) return
+  try{
+    const fileHandle = entry.handle
+    const file = await fileHandle.getFile()
+    const text = await file.text()
+    const data = parseMd(text)
+    applyParsedMd(data)
+    currentFileHandle = fileHandle
+    currentFileName = name
+    renderSidebar()
+    showAlert('📄 ' + name + ' carregado','#1a1a2a,#2a2a4a')
+  }catch(e){
+    showAlert('Erro: ' + e.message,'#2a1a1a,#4a2a2a')
+  }
+}
+
+async function saveCurrentFile(){
+  if(!currentFileHandle){
+    await showSaveDialog()
+    return
+  }
+  try{
+    const content = generateMd()
+    const writable = await currentFileHandle.createWritable()
+    await writable.write(content)
+    await writable.close()
+    showAlert('💾 ' + currentFileName + ' salvo!','#1a2a1a,#2a4a2a')
+  }catch(e){
+    showAlert('Erro ao salvar: ' + e.message,'#2a1a1a,#4a2a2a')
+  }
+}
+
+async function showSaveDialog(){
+  try{
+    const opts = {
+      suggestedName: 'novo-projeto.md',
+      types: [{description:'Markdown', accept:{'text/markdown':['.md']}}]
+    }
+    const handle = await window.showSaveFilePicker(opts)
+    const content = generateMd()
+    const writable = await handle.createWritable()
+    await writable.write(content)
+    await writable.close()
+    currentFileHandle = handle
+    currentFileName = handle.name
+    // Se estiver dentro da pasta aberta, adiciona à sidebar
+    if(dirHandle){
+      try{
+        const newEntry = await dirHandle.getFileHandle(handle.name)
+        if(newEntry){
+          if(!fileEntries.find(e => e.name === handle.name)){
+            fileEntries.push({name: handle.name, handle: newEntry})
+            fileEntries.sort((a,b) => a.name.localeCompare(b.name))
+          }
+          renderSidebar()
+        }
+      }catch(e){ /* pode estar fora da pasta */ }
+    }
+    showAlert('💾 Salvo como ' + handle.name,'#1a2a1a,#2a4a2a')
+  }catch(e){
+    if(e.name !== 'AbortError') alert('Erro ao salvar: ' + e.message)
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// METADATA HELPERS
+// ═══════════════════════════════════════════════════════════════
+function getMeta(){
+  return {
+    title: document.getElementById('f-title').value.trim(),
+    initials: document.getElementById('f-initials').value.trim(),
+    category: document.getElementById('f-category').value,
+    categoryLabel: document.getElementById('f-categoryLabel').value.trim(),
+    thumb: document.getElementById('f-thumb').value.trim(),
+    url: document.getElementById('f-url').value.trim(),
+    weight: document.getElementById('f-weight').value,
+    role: document.getElementById('f-role').value.trim(),
+    description: document.getElementById('f-desc').value.trim(),
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER BLOCKS
+// ═══════════════════════════════════════════════════════════════
+function renderBlocks(){
+  const c = document.getElementById('blocks-container')
+  if(!blocks.length){ c.innerHTML='<div class="empty-state">Nenhum bloco ainda.</div>'; renderOutput(); return }
+  c.innerHTML = blocks.map((b,i)=>renderBlockCard(b,i)).join('')
+  renderOutput()
+}
+
+function renderBlockCard(b,i){
+  const t = b.type
+  const fields = typeFields[t] || []
+  const bodyHtml = fields.map(f => {
+    const val = b[f.key] !== undefined ? b[f.key] : ''
+    if(f.type === 'textarea')
+      return `<label>${f.label}</label><textarea data-idx="${i}" data-key="${f.key}" rows="${f.rows||2}" placeholder="${f.placeholder||''}">${escHtml(val)}</textarea>`
+    if(f.type === 'select'){
+      const opts = (f.opts||[]).map(o => `<option value="${o.v}"${o.v===val?' selected':''}>${o.l}</option>`).join('')
+      return `<label>${f.label}</label><select data-idx="${i}" data-key="${f.key}">${opts}</select>`
+    }
+    return `<label>${f.label}</label><input data-idx="${i}" data-key="${f.key}" value="${escHtml(val)}" placeholder="${f.placeholder||''}">`
+  }).join('')
+  return `<div class="block-card">
+    <div class="block-header">
+      <span class="block-type-badge">${t}</span>
+      <div class="block-actions">
+        <button class="btn btn-sm" onclick="moveBlock(${i},-1)" ${i===0?'disabled':''}>↑</button>
+        <button class="btn btn-sm" onclick="moveBlock(${i},1)" ${i===blocks.length-1?'disabled':''}>↓</button>
+        <button class="btn btn-sm btn-danger" onclick="removeBlock(${i})">✕</button>
+      </div>
+    </div>
+    <div class="block-body">${bodyHtml}</div>
+  </div>`
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EVENTS
+// ═══════════════════════════════════════════════════════════════
+document.getElementById('blocks-container').addEventListener('input', onBlockChange)
+document.getElementById('blocks-container').addEventListener('change', onBlockChange)
+const metaFields = ['f-title','f-initials','f-category','f-categoryLabel','f-thumb','f-url','f-weight','f-role','f-desc']
+metaFields.forEach(id => document.getElementById(id).addEventListener('input', renderOutput))
+
+function onBlockChange(e){
+  const el = e.target
+  const idx = parseInt(el.dataset.idx)
+  const key = el.dataset.key
+  if(isNaN(idx) || !key) return
+  blocks[idx][key] = el.value
+  renderOutput()
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BLOCK ACTIONS
+// ═══════════════════════════════════════════════════════════════
+function addBlock(type){
+  const def = {}
+  const fields = typeFields[type] || []
+  fields.forEach(f => { def[f.key] = f.type === 'select' ? (f.opts[0]?.v||'') : '' })
+  def.type = type
+  if(type==='image'||type==='video'||type==='video-local') def.captionPos=''
+  if(type==='text-image') def.flip='false'
+  blocks.push(def)
+  renderBlocks()
+  setTimeout(() => {
+    const cards = document.querySelectorAll('.block-card')
+    if(cards.length) cards[cards.length-1].scrollIntoView({behavior:'smooth',block:'nearest'})
+  }, 50)
+}
+
+function removeBlock(i){ blocks.splice(i,1); renderBlocks() }
+
+function moveBlock(i,dir){
+  const j = i+dir
+  if(j<0||j>=blocks.length) return
+  ;[blocks[i],blocks[j]] = [blocks[j],blocks[i]]
+  renderBlocks()
+}
+
+// ═══════════════════════════════════════════════════════════════
+// YAML GENERATION
+// ═══════════════════════════════════════════════════════════════
+function yamlQuote(v){
+  if(v === undefined || v === null) return ''
+  const s = String(v)
+  if(!s) return '""'
+  return '"' + s.replace(/"/g,'\\"') + '"'
+}
+
+function yamlMultiline(v, indent){
+  const pad = ' '.repeat(indent)
+  return '|\n' + v.split('\n').map(l => pad + l).join('\n')
+}
+
+function generateMd(){
+  const m = getMeta()
+  const lines = ['---']
+  const metaOrder = ['title','initials','category','categoryLabel','thumb','url','weight','role','description']
+  metaOrder.forEach(k => {
+    if(k==='weight' && m.weight){ lines.push(`weight: ${m.weight}`); return }
+    if(!m[k]){ lines.push(`${k}: ""`); return }
+    if(k==='description' && m.description){
+      lines.push(`description: |\n  ${m.description}`)
+      return
+    }
+    lines.push(`${k}: ${yamlQuote(m[k])}`)
+  })
+  if(blocks.length){
+    lines.push('blocks:')
+    blocks.forEach(b => {
+      lines.push(`  - type: ${b.type}`)
+      ;(typeFields[b.type]||[]).forEach(f => {
+        const val = b[f.key]
+        if(val === undefined || val === '') return
+        if(f.key==='flip'){ lines.push(`    flip: ${val}`); return }
+        if(f.key==='images' && val){
+          lines.push(`    images:`)
+          val.split('\n').filter(l=>l.trim()).forEach(l => lines.push(`      - ${yamlQuote(l.trim())}`))
+          return
+        }
+        if(f.type==='textarea'){
+          lines.push(`    ${f.key}: ${yamlMultiline(val, 6)}`)
+          return
+        }
+        if(f.type==='select' && !val) return
+        lines.push(`    ${f.key}: ${yamlQuote(val)}`)
+      })
+    })
+  }
+  lines.push('---')
+  return lines.join('\n')
+}
+
+function renderOutput(){ document.getElementById('output').textContent = generateMd() }
+
+// ═══════════════════════════════════════════════════════════════
+// CLIPBOARD
+// ═══════════════════════════════════════════════════════════════
+function copyOutput(){
+  const text = generateMd()
+  navigator.clipboard.writeText(text)
+    .then(() => showAlert('✅ Copiado!','#1a2a1a,#2a4a2a'))
+    .catch(() => {
+      const ta = document.createElement('textarea')
+      ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove()
+      showAlert('✅ Copiado!','#1a2a1a,#2a4a2a')
+    })
+}
+
+function showAlert(msg,colors){
+  const a = document.getElementById('alert-area')
+  const [bg,border] = colors.split(',')
+  a.innerHTML = `<div class="alert" style="background:${bg};border-color:${border}">${msg}</div>`
+  setTimeout(()=>{a.innerHTML=''},3000)
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PARSE EXISTING .MD
+// ═══════════════════════════════════════════════════════════════
+function parseMd(text){
+  const fmMatch = text.match(/^---\s*\n([\s\S]*?)\n---/)
+  if(!fmMatch) throw new Error('Frontmatter não encontrado (---)')
+  const fmText = fmMatch[1]
+  const meta = {}
+  const blocksOut = []
+  const blockMatch = fmText.match(/^(.*?)blocks:\s*\n([\s\S]*)$/s)
+  const metaLines = blockMatch ? blockMatch[1] : fmText
+  const blockLines = blockMatch ? blockMatch[2] : ''
+  parseSimpleYaml(metaLines, meta)
+  if(blockLines){
+    const entries = blockLines.split(/\n(?=  - type:)/)
+    entries.forEach(entry => {
+      const tMatch = entry.match(/type:\s*(\S+)/)
+      if(!tMatch) return
+      const type = tMatch[1]
+      const block = {type}
+      const rest = entry.replace(/^\s*-\s*type:\s*\S+\s*\n?/, '')
+      const map = {}
+      parseSimpleYaml(rest, map)
+      ;(typeFields[type]||[]).forEach(f => { block[f.key] = map[f.key] !== undefined ? map[f.key] : '' })
+      if(block.flip !== undefined) block.flip = String(block.flip)
+      blocksOut.push(block)
+    })
+  }
+  return {meta, blocks: blocksOut}
+}
+
+function parseSimpleYaml(text, target){
+  let i = 0
+  const lines = text.split('\n')
+  while(i < lines.length){
+    const line = lines[i]; i++
+    const m = line.match(/^\s*(\w+):\s*(.*)$/)
+    if(!m) continue
+    const key = m[1]; let val = m[2].trim()
+    if(val === '|'){
+      const ml = []
+      while(i < lines.length){
+        const n = lines[i]
+        if(n.match(/^\s{2,}/) || n === ''){ ml.push(n.replace(/^\s{2}/,'')); i++ }
+        else break
+      }
+      target[key] = ml.join('\n').trimEnd()
+    } else if(val === ''){
+      // pode ser array (próximas linhas: "  - value")
+      const arr = []
+      while(i < lines.length){
+        const n = lines[i]
+        const am = n.match(/^\s{4,}- (.+)$/)
+        if(!am) break
+        arr.push(am[1].replace(/^"(.*)"$/,'$1'))
+        i++
+      }
+      target[key] = arr.length ? arr.join('\n') : ''
+    } else if(val.startsWith('"') && val.endsWith('"')){ target[key] = val.slice(1,-1) }
+    else if(val === 'true' || val === 'false'){ target[key] = val }
+    else if(!isNaN(val) && val !== ''){ target[key] = val }
+    else { target[key] = val }
+  }
+}
+
+function applyParsedMd(data){
+  const m = data.meta
+  if(m.title !== undefined) document.getElementById('f-title').value = m.title
+  if(m.initials !== undefined) document.getElementById('f-initials').value = m.initials
+  if(m.category !== undefined){
+    const sel = document.getElementById('f-category')
+    if([...sel.options].some(o => o.value === m.category)) sel.value = m.category
+  }
+  if(m.categoryLabel !== undefined){
+    document.getElementById('f-categoryLabel').value = m.categoryLabel
+    document.getElementById('f-categoryLabel').dataset.touched = '1'
+  }
+  if(m.thumb !== undefined) document.getElementById('f-thumb').value = m.thumb
+  if(m.url !== undefined) document.getElementById('f-url').value = m.url
+  if(m.weight !== undefined) document.getElementById('f-weight').value = m.weight
+  if(m.role !== undefined) document.getElementById('f-role').value = m.role
+  if(m.description !== undefined) document.getElementById('f-desc').value = m.description
+  blocks = data.blocks || []
+  renderBlocks()
+  renderOutput()
+}
+
+// ═══════════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════════
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+syncCategoryLabel()
+renderOutput()
+</script>
+</body>
+</html>

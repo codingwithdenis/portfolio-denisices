@@ -7,15 +7,16 @@
 {{ range where (where .Site.RegularPages "Section" "projects") "Params.hidden" "!=" true }}
   <div class="project-card" data-category="{{ .Params.category }}" data-modal="modal-{{ .File.ContentBaseName }}">
     <div class="project-thumb">
-      {{ if .Params.thumb }}
-      <img src="{{ .Params.thumb }}" alt="{{ .Title }}" loading="lazy">
+      {{ $thumbUrl := partial "project-thumb-url" .Params }}
+      {{ if $thumbUrl }}
+      <img src="{{ $thumbUrl }}" alt="{{ .Title }}" loading="lazy">
       {{ else }}
       <div class="project-thumb-inner">{{ .Params.initials }}</div>
       {{ end }}
     </div>
     <div class="project-meta">
       <span class="project-title">{{ .Title }}</span>
-      <span class="project-tag">{{ .Params.year }}</span>
+      <span class="project-tag">{{ .Params.categoryLabel }}</span>
     </div>
   </div>
 {{ end }}
@@ -26,35 +27,33 @@
   <div class="modal">
     <button class="modal-close" data-modal="modal-{{ $p.File.ContentBaseName }}">✕</button>
     <div class="modal-hero">
-      {{ if $p.Params.thumb }}
-      <img src="{{ $p.Params.thumb }}" alt="{{ $p.Title }}" loading="lazy">
+      {{ $thumbUrl := partial "project-thumb-url" $p.Params }}
+      {{ if $thumbUrl }}
+      <img src="{{ $thumbUrl }}" alt="{{ $p.Title }}" loading="lazy">
       {{ else }}
       <div class="modal-hero-label">{{ $p.Params.initials }}</div>
       {{ end }}
     </div>
     <div class="modal-body">
-      <div class="modal-category">{{ $p.Params.categoryLabel }}</div>
-      <h2 class="modal-title">{{ $p.Title }}</h2>
-      <p class="modal-description">{{ $p.Params.description | markdownify }}</p>
-      {{ with $p.Params.blocks }}
-      <div class="modal-content">
-        {{ partial "project-blocks" (dict "blocks" . "initials" $p.Params.initials) }}
-      </div>
-      {{ end }}
       <div class="modal-specs">
-        <div>
-          <div class="modal-spec-label">Year</div>
-          <div class="modal-spec-value">{{ $p.Params.year }}</div>
-        </div>
         <div>
           <div class="modal-spec-label">Category</div>
           <div class="modal-spec-value">{{ $p.Params.categoryLabel }}</div>
         </div>
         <div>
           <div class="modal-spec-label">Role</div>
-          <div class="modal-spec-value">Director, Designer</div>
+          <div class="modal-spec-value">{{ with $p.Params.role }}{{ . }}{{ else }}Director, Designer{{ end }}</div>
         </div>
       </div>
+
+      <h2 class="modal-title">{{ $p.Title }}</h2>
+      <p class="modal-description">{{ $p.Params.description | markdownify }}</p>
+
+      {{ with $p.Params.blocks }}
+      <div class="modal-content">
+        {{ partial "project-blocks" (dict "blocks" . "initials" $p.Params.initials) }}
+      </div>
+      {{ end }}
       <a href="{{ $p.RelPermalink }}" class="modal-full-link">Open full page →</a>
     </div>
   </div>

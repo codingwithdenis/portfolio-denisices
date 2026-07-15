@@ -5,6 +5,25 @@
     </div>
 
   {{ else if eq .type "image" }}
+    {{- if and .body (or (eq .captionPos "top") (eq .captionPos "bottom")) }}
+    <div class="content-block" style="grid-template-columns:1fr">
+      {{ if eq .captionPos "top" }}
+        <div class="content-text"><p>{{ .body | markdownify }}</p></div>
+        {{ if .src }}
+          <div class="content-image"><img src="{{ .src }}" alt="{{ with .label }}{{ . }}{{ end }}" loading="lazy"></div>
+        {{ else }}
+          <div class="content-image"><span class="content-image-label">{{ with .label }}{{ . }}{{ else }}{{ $.initials }}{{ end }}</span></div>
+        {{ end }}
+      {{ else }}
+        {{ if .src }}
+          <div class="content-image"><img src="{{ .src }}" alt="{{ with .label }}{{ . }}{{ end }}" loading="lazy"></div>
+        {{ else }}
+          <div class="content-image"><span class="content-image-label">{{ with .label }}{{ . }}{{ else }}{{ $.initials }}{{ end }}</span></div>
+        {{ end }}
+        <div class="content-text"><p>{{ .body | markdownify }}</p></div>
+      {{ end }}
+    </div>
+    {{ else }}
     <div class="content-block"
       {{- if not .body }} style="grid-template-columns:1fr"{{ end -}}>
       {{ if .src }}
@@ -16,6 +35,7 @@
         <div class="content-text"><p>{{ . | markdownify }}</p></div>
       {{ end }}
     </div>
+    {{ end }}
 
   {{ else if eq .type "text-image" }}
     <div class="content-block{{ if .flip }} flip{{ end }}">
@@ -25,10 +45,57 @@
       <div class="content-text"><p>{{ .body | markdownify }}</p></div>
     </div>
 
+  {{ else if eq .type "video-local" }}
+    <div class="content-block" style="grid-template-columns:1fr">
+      {{ if eq .captionPos "top" }}
+        {{ with .body }}
+          <div class="content-text"><p>{{ . | markdownify }}</p></div>
+        {{ end }}
+      {{ end }}
+      <div class="content-video">
+        <video src="{{ .src }}" controls preload="metadata"{{ with .poster }} poster="{{ . }}"{{ end }}></video>
+      </div>
+      {{ if ne .captionPos "top" }}
+        {{ with .body }}
+          <div class="content-text"><p>{{ . | markdownify }}</p></div>
+        {{ end }}
+      {{ end }}
+    </div>
+
   {{ else if eq .type "video" }}
     <div class="content-block" style="grid-template-columns:1fr">
+      {{ if eq .captionPos "top" }}
+        {{ with .body }}
+          <div class="content-text"><p>{{ . | markdownify }}</p></div>
+        {{ end }}
+      {{ end }}
       <div class="content-video">
         <iframe src="{{ .src }}" allowfullscreen loading="lazy"></iframe>
+      </div>
+      {{ if ne .captionPos "top" }}
+        {{ with .body }}
+          <div class="content-text"><p>{{ . | markdownify }}</p></div>
+        {{ end }}
+      {{ end }}
+    </div>
+
+  {{ else if eq .type "carousel" }}
+    <div class="content-block" style="grid-template-columns:1fr">
+      <div class="content-carousel" data-carousel>
+        <div class="carousel-track" data-track>
+          {{ range .images }}
+            <div class="carousel-slide"><img src="{{ . }}" alt="" loading="lazy"></div>
+          {{ end }}
+        </div>
+        {{ if gt (len .images) 1 }}
+        <button class="carousel-btn carousel-prev" data-prev>‹</button>
+        <button class="carousel-btn carousel-next" data-next>›</button>
+        <div class="carousel-dots" data-dots>
+          {{ range $i, $_ := .images }}
+            <button class="carousel-dot{{ if eq $i 0 }} active{{ end }}" data-dot="{{ $i }}"></button>
+          {{ end }}
+        </div>
+        {{ end }}
       </div>
       {{ with .body }}
         <div class="content-text"><p>{{ . | markdownify }}</p></div>

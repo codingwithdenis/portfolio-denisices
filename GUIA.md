@@ -37,6 +37,7 @@ thumb: ""                                # URL da imagem (deixe "" pra usar init
 url: ""                                  # Link opcional pro projeto ao vivo
 weight: 1                                # Menor número = aparece primeiro na lista
 hidden: false                            # true = oculta do grid sem apagar o arquivo
+role: "Director, Designer"               # Seu papel no projeto (opcional)
 description: |                           # Texto introdutório do projeto
   Aqui vai a descrição em **markdown**.
   Pode usar **negrito**, *itálico*, etc.
@@ -51,6 +52,9 @@ blocks:                                  # Blocos de conteúdo da página do pro
   - type: image                          # ── IMAGEM ──
     src: ""                              # URL da imagem (deixe "" pra placeholder)
     label: "MP"                          # Texto do placeholder quando src vazio
+    captionPos: ""                       # "top" | "bottom" — legenda em cima/baixo (coluna única)
+    body: |                              # Texto opcional (lado a lado sem captionPos)
+      Legenda ou descrição.
 
   - type: text-image                     # ── TEXTO + IMAGEM LADO A LADO ──
     image: ""                            # URL da imagem
@@ -61,8 +65,23 @@ blocks:                                  # Blocos de conteúdo da página do pro
 
   - type: video                          # ── VÍDEO EMBED ──
     src: "https://youtube.com/embed/..."  # Link do embed YouTube ou Vimeo
-    body: |                              # Legenda opcional abaixo do vídeo
+    captionPos: ""                       # "top" — legenda acima (padrão: abaixo)
+    body: |                              # Legenda opcional (acima ou abaixo)
       Descrição do vídeo.
+
+  - type: video-local                    # ── VÍDEO HOSPEDADO ──
+    src: "https://..."                    # URL do arquivo .mp4 (Cloudinary, etc.)
+    poster: "https://..."                 # URL da thumbnail opcional
+    captionPos: ""                       # "top" — legenda acima (padrão: abaixo)
+    body: |                              # Legenda opcional (acima ou abaixo)
+      Descrição do vídeo.
+
+  - type: carousel                        # ── CARROSSEL DE IMAGENS ──
+    images:                               # Lista de URLs (uma por linha)
+      - "https://..."
+      - "https://..."
+    body: |                               # Legenda opcional abaixo
+      Descrição opcional.
 
   - type: compare                         # ── COMPARADOR ANTES/DEPOIS ──
     before: ""                            # URL da imagem "antes"
@@ -86,15 +105,31 @@ Renderiza o texto ocupando toda a largura. Suporta markdown:
 
 ### `image` — Imagem sozinha
 Se `src` estiver vazio, mostra as iniciais como placeholder (igual ao design original).
-Se `body` estiver preenchido, renderiza imagem + descrição lado a lado.
+- Sem `body` — imagem sozinha em largura total
+- Com `body` sem `captionPos` — imagem + texto lado a lado
+- Com `body` e `captionPos: "top"` ou `"bottom"` — imagem + legenda em coluna única
 
 ### `text-image` — Texto com imagem ao lado
 Duas colunas: imagem de um lado, texto do outro.
 - `flip: false` → imagem na esquerda, texto na direita
 - `flip: true` → imagem na direita, texto na esquerda
 
-### `video` — Vídeo embed
-Embed YouTube ou Vimeo em 16:9. O `body` é opcional (legenda).
+### `video` — Vídeo embed (YouTube/Vimeo)
+Embed YouTube ou Vimeo em 16:9.
+- `body` — legenda (padrão: abaixo)
+- `captionPos: "top"` — legenda acima do vídeo
+
+### `video-local` — Vídeo hospedado próprio
+Vídeo .mp4 hospedado no Cloudinary ou outro servidor. Usa tag `<video>` nativa com controles.
+- `src` — URL do arquivo .mp4
+- `poster` — URL da thumbnail (opcional)
+- `body` — legenda (padrão: abaixo)
+- `captionPos: "top"` — legenda acima do vídeo
+
+### `carousel` — Carrossel de imagens
+Galeria com navegação por setas e bolinhas. Aceita múltiplas imagens.
+- `images` — Array de URLs (uma por linha no builder)
+- `body` — legenda opcional abaixo
 
 ### `compare` — Comparador antes/depois
 Slider interativo para comparar duas imagens. Arraste a barra ou clique em qualquer ponto para revelar a imagem "depois" sobre a "antes".

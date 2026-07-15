@@ -1,0 +1,19 @@
+{{ define "main" }}
+<div class="info-page">
+  {{ with .Params.photo }}
+  <div class="info-photo">
+    <img src="{{ . }}" alt="{{ $.Params.photoAlt }}" loading="lazy">
+  </div>
+  {{ end }}
+
+  <div class="info-bio">
+    {{ .Content }}
+  </div>
+
+  <div class="info-contact">
+    <a href="mailto:{{ .Site.Params.email }}">{{ .Site.Params.email }}</a>
+    <a href="{{ .Site.Params.instagram }}" target="_blank" rel="noopener">Instagram</a>
+    <a href="{{ .Site.Params.linkedin }}" target="_blank" rel="noopener">LinkedIn</a>
+  </div>
+</div>
+{{ end }}

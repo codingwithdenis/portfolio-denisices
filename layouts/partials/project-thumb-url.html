@@ -1,0 +1,15 @@
+{{- $url := "" -}}
+{{- if .thumb -}}
+  {{- $url = .thumb -}}
+{{- else if eq .category "video" -}}
+  {{- range .blocks -}}
+    {{- if eq .type "video" -}}
+      {{- $src := .src -}}
+      {{- if findRE "^https?://(www\\.)?youtube\\.com/embed/" $src -}}
+        {{- $vidId := replaceRE "^.*youtube\\.com/embed/([^?]+).*$" "$1" $src -}}
+        {{- $url = printf "https://img.youtube.com/vi/%s/maxresdefault.jpg" $vidId -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $url -}}
